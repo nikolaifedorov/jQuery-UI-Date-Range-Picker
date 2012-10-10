@@ -1,0 +1,28 @@
+Developer Options
+
+The following options are available in this plugin:
+
+presetRanges: Array of objects to be made into menu range presets. Each object requires 3 properties:
+text: string, text for menu item
+dateStart: date.js string, or function which returns a date object, start of date range
+dateEnd: date.js string, or function which returns a date object, end of date range
+presets: Object, datepicker toggle links. Available options are: 'specificDate', 'allDatesBefore', 'allDatesAfter', 'dateRange'. Each can be passed a string for link and label text. (example: presets: {specificDate: 'Pick a date'} ).
+rangeStartTitle: string, text for label above start calendar in a range.
+rangeEndTitle: string, text for label above end calendar in a range.
+doneButtonText: string, text for the done/close button.
+prevLinkText: string, text for the previous arrow (used in title attr of links as well).
+nextLinkText: string, text for the next arrow (used in title attr of links as well).
+earliestDate: Date.js string, earliest date allowed in system
+latestDate: Date.js string, latest date allowed in system
+constrainDates: ?
+rangeSplitter: String, character between two dates in a range.
+dateFormat String, date formatting, see available values
+closeOnSelect: Boolean, true will close the rangepicker when a full range is selected.
+arrows: Boolean, true will add date range advancing arrows to input.
+posX: int or string, left absolute position of rangepicker. Defaults to bottom left of input.
+posY: int or string, top absolute position of rangepicker. Defaults to bottom left of input.
+appendTo: jQuery selector or element, element to append range picker to.
+onOpen: function, callback that executes the moment the range picker starts to open.
+onClose: function, callback that executes when the datepicker closes.
+onChange: function, callback that executes whenever the date input changes (can happen twice on range selections).
+datepickerOptions: Object, accepts all jQuery UI Datepicker options. See UI datepicker options.
