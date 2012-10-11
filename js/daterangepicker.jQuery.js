@@ -53,6 +53,7 @@ jQuery.fn.daterangepicker = function(settings){
 		earliestDate: Date.parse('-15years'), //earliest date allowed 
 		latestDate: Date.parse('+15years'), //latest date allowed 
 		constrainDates: false,
+    autoPosition: true,
 		rangeSplitter: '-', //string to use between dates in single input
 		dateFormat: 'm/d/yy', // date formatting. Available formats: http://docs.jquery.com/UI/Datepicker/%24.datepicker.formatDate
 		closeOnSelect: true, //if a complete selection is made, close the menu
@@ -184,7 +185,9 @@ jQuery.fn.daterangepicker = function(settings){
 	//show, hide, or toggle rangepicker
 	function showRP(){
 		if(rp.data('state') == 'closed'){
-      positionRP();
+      if (options.autoPosition) {
+        positionRP();
+      }
       rp.fadeIn(300).data('state', 'open');
 			options.onOpen(); 
 		}
