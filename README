@@ -1,4 +1,11 @@
+jQuery-UI-Date-Range-Picker
+===========================
+
+We've updated our popular Date Range Picker plugin to use jQuery UI 1.7 and the new jQuery UI CSS Framework. This plugin wraps the jQuery UI datepicker into an interactive component specifically designed for choosing date ranges.
+
+
 Developer Options
+=================
 
 The following options are available in this plugin:
 
@@ -26,3 +33,18 @@ onOpen: function, callback that executes the moment the range picker starts to o
 onClose: function, callback that executes when the datepicker closes.
 onChange: function, callback that executes whenever the date input changes (can happen twice on range selections).
 datepickerOptions: Object, accepts all jQuery UI Datepicker options. See UI datepicker options.
+
+
+Features and Updates
+====================
+
+Uses 
+jQuery UI 1.7.1: T
+he range picker now uses the latest version of jQuery UI's datepicker, and allows passing of native datepicker options.
+
+Date.js 
+Integration: We've integrated the fantastic date.js library to allow for easy preset development.
+Optional Range Advancing Arrows: Optional forward and back arrows allow a user to jump forward and backward by range duration.
+
+jQuery UI CSS Framework-Driven: 
+Our range picker uses jQuery UI CSS Framework classes, making it ThemeRoller-Ready.
