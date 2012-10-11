@@ -39,8 +39,8 @@ Features and Updates
 ====================
 
 Uses 
-jQuery UI 1.7.1: T
-he range picker now uses the latest version of jQuery UI's datepicker, and allows passing of native datepicker options.
+jQuery UI 1.7.1: 
+The range picker now uses the latest version of jQuery UI's datepicker, and allows passing of native datepicker options.
 
 Date.js 
 Integration: We've integrated the fantastic date.js library to allow for easy preset development.
