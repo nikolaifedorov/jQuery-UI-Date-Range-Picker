@@ -2,15 +2,21 @@
  * --------------------------------------------------------------------
  * jQuery-Plugin "daterangepicker.jQuery.js"
  * by Scott Jehl, scott@filamentgroup.com
+ * http://www.filamentgroup.com
  * reference article: http://www.filamentgroup.com/lab/update_date_range_picker_with_jquery_ui/
  * demo page: http://www.filamentgroup.com/examples/daterangepicker/
  * 
  * Copyright (c) 2010 Filament Group, Inc
  * Dual licensed under the MIT (filamentgroup.com/examples/mit-license.txt) and GPL (filamentgroup.com/examples/gpl-license.txt) licenses.
  *
- * Dependencies: jquery, jquery UI datepicker, date.js, jQuery UI CSS Framework
- 
+ * Dependencies: jquery, jquery UI datepicker, date.js library, jQuery UI CSS Framework
+ *
+ * Changelog:
  *  12.15.2010 Made some fixes to resolve breaking changes introduced by jQuery UI 1.8.7
+ * 	10.23.2008 initial Version
+ *  11.12.2008 changed dateFormat option to allow custom date formatting (credit: http://alexgoldstone.com/)
+ *  01.04.09 updated markup to new jQuery UI CSS Framework
+ *  01.19.2008 changed presets hash to support different text 
  * --------------------------------------------------------------------
  */
 jQuery.fn.daterangepicker = function(settings){
@@ -47,17 +53,19 @@ jQuery.fn.daterangepicker = function(settings){
 		earliestDate: Date.parse('-15years'), //earliest date allowed 
 		latestDate: Date.parse('+15years'), //latest date allowed 
 		constrainDates: false,
+    autoPosition: true,
 		rangeSplitter: '-', //string to use between dates in single input
 		dateFormat: 'm/d/yy', // date formatting. Available formats: http://docs.jquery.com/UI/Datepicker/%24.datepicker.formatDate
 		closeOnSelect: true, //if a complete selection is made, close the menu
 		arrows: false,
+		posX: rangeInput.offset().left, // x position
+		posY: rangeInput.offset().top + rangeInput.outerHeight(), // y position
 		appendTo: 'body',
 		onClose: function(){},
 		onOpen: function(){},
 		onChange: function(){},
 		datepickerOptions: null //object containing native UI datepicker API options
 	}, settings);
-	
 	
 
 	//custom datepicker options, extended by options
@@ -66,9 +74,9 @@ jQuery.fn.daterangepicker = function(settings){
 				if(rp.find('.ui-daterangepicker-specificDate').is('.ui-state-active')){
 					rp.find('.range-end').datepicker('setDate', rp.find('.range-start').datepicker('getDate') ); 
 				}
-				
-				$(this).trigger('constrainOtherPicker');
-				
+
+				jQuery(this).trigger('constrainOtherPicker');
+
 				var rangeA = fDate( rp.find('.range-start').datepicker('getDate') );
 				var rangeB = fDate( rp.find('.range-end').datepicker('getDate') );
 				
@@ -93,6 +101,7 @@ jQuery.fn.daterangepicker = function(settings){
 	
 	//change event fires both when a calendar is updated or a change event on the input is triggered
 	rangeInput.bind('change', options.onChange);
+	
 	
 	//datepicker options from options
 	options.datepickerOptions = (settings) ? jQuery.extend(datepickerOptions, settings.datepickerOptions) : datepickerOptions;
@@ -141,8 +150,8 @@ jQuery.fn.daterangepicker = function(settings){
 				})
 			.click(function(){
 				rp.find('.ui-state-active').removeClass('ui-state-active');
-				jQuery(this).addClass('ui-state-active');
-				clickActions(jQuery(this),rp, rpPickers, doneBtn);
+        jQuery(this).addClass('ui-state-active');
+        clickActions(jQuery(this),rp, rpPickers, doneBtn);
 				return false;
 			});
 		return ul;
@@ -175,9 +184,11 @@ jQuery.fn.daterangepicker = function(settings){
 	
 	//show, hide, or toggle rangepicker
 	function showRP(){
-		if(rp.data('state') == 'closed'){ 
-			positionRP();
-			rp.fadeIn(300).data('state', 'open');
+		if(rp.data('state') == 'closed'){
+      if (options.autoPosition) {
+        positionRP();
+      }
+      rp.fadeIn(300).data('state', 'open');
 			options.onOpen(); 
 		}
 	}
@@ -191,54 +202,53 @@ jQuery.fn.daterangepicker = function(settings){
 		if( rp.data('state') == 'open' ){ hideRP(); }
 		else { showRP(); }
 	}
-	function positionRP(){
-		var relEl = riContain || rangeInput; //if arrows, use parent for offsets
-		var riOffset = relEl.offset(),
-			side = 'left',
-			val = riOffset.left,
-			offRight = jQuery(window).width() - val - relEl.outerWidth();
 
-		if(val > offRight){
-			side = 'right', val =  offRight;
-		}
-		
-		rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight());
-	}
-	
-	
-					
+  function positionRP(){
+    var relEl = riContain || rangeInput; //if arrows, use parent for offsets
+    var riOffset = relEl.offset(),
+        side = 'left',
+        val = riOffset.left,
+        offRight = jQuery(window).width() - val - relEl.outerWidth();
+
+    if(val > offRight){
+      rp.parent().css(side, '');
+      side = 'right', val =  offRight;
+    }
+    rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight());
+  }
+
 	//preset menu click events	
 	function clickActions(el, rp, rpPickers, doneBtn){
 		
-		if(el.is('.ui-daterangepicker-specificDate')){
-			//Specific Date (show the "start" calendar)
+		if(el.is('.ui-daterangepicker-specificDate')) {
+      //Specific Date (show the "start" calendar)
 			doneBtn.hide();
 			rpPickers.show();
 			rp.find('.title-start').text( options.presets.specificDate );
 			rp.find('.range-start').restoreDateFromData().css('opacity',1).show(400);
-			rp.find('.range-end').restoreDateFromData().css('opacity',0).hide(400);
+      rp.find('.range-end').restoreDateFromData().css('opacity',0).hide(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
 		}
-		else if(el.is('.ui-daterangepicker-allDatesBefore')){
-			//All dates before specific date (show the "end" calendar and set the "start" calendar to the earliest date)
+		else if(el.is('.ui-daterangepicker-allDatesBefore')) {
+      //All dates before specific date (show the "end" calendar and set the "start" calendar to the earliest date)
 			doneBtn.hide();
 			rpPickers.show();
 			rp.find('.title-end').text( options.presets.allDatesBefore );
-			rp.find('.range-start').saveDateToData().datepicker('setDate', options.earliestDate).css('opacity',0).hide(400);
-			rp.find('.range-end').restoreDateFromData().css('opacity',1).show(400);
+      rp.find('.range-start').saveDateToData().datepicker('setDate', options.earliestDate).css('opacity',0).hide(400);
+      rp.find('.range-end').restoreDateFromData().css('opacity',1).show(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
 		}
 		else if(el.is('.ui-daterangepicker-allDatesAfter')){
-			//All dates after specific date (show the "start" calendar and set the "end" calendar to the latest date)
+      //All dates after specific date (show the "start" calendar and set the "end" calendar to the latest date)
 			doneBtn.hide();
 			rpPickers.show();
 			rp.find('.title-start').text( options.presets.allDatesAfter );
 			rp.find('.range-start').restoreDateFromData().css('opacity',1).show(400);
-			rp.find('.range-end').saveDateToData().datepicker('setDate', options.latestDate).css('opacity',0).hide(400);
+      rp.find('.range-end').saveDateToData().datepicker('setDate', options.latestDate).css('opacity',0).hide(400);
 			setTimeout(function(){doneBtn.fadeIn();}, 400);
 		}
 		else if(el.is('.ui-daterangepicker-dateRange')){
-			//Specific Date range (show both calendars)
+      //Specific Date range (show both calendars)
 			doneBtn.hide();
 			rpPickers.show();
 			rp.find('.title-start').text(options.rangeStartTitle);
@@ -249,14 +259,14 @@ jQuery.fn.daterangepicker = function(settings){
 		}
 		else {
 			//custom date range specified in the options (no calendars shown)
-			doneBtn.hide();
-			rp.find('.range-start, .range-end').css('opacity',0).hide(400, function(){
-				rpPickers.hide();
-			});
-			var dateStart = (typeof el.data('dateStart') == 'string') ? Date.parse(el.data('dateStart')) : el.data('dateStart')();
-			var dateEnd = (typeof el.data('dateEnd') == 'string') ? Date.parse(el.data('dateEnd')) : el.data('dateEnd')();
-			rp.find('.range-start').datepicker('setDate', dateStart).find('.ui-datepicker-current-day').trigger('click');
-			rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
+				doneBtn.hide();
+        rp.find('.range-start, .range-end').css('opacity',0).hide(400, function() {
+					rpPickers.hide();
+				});
+				var dateStart = (typeof el.data('dateStart') == 'string') ? Date.parse(el.data('dateStart')) : el.data('dateStart')();
+        var dateEnd = (typeof el.data('dateEnd') == 'string') ? Date.parse(el.data('dateEnd')) : el.data('dateEnd')();    
+				rp.find('.range-start').datepicker('setDate', dateStart).find('.ui-datepicker-current-day').trigger('click');
+				rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
 		}
 		
 		return false;
@@ -265,27 +275,24 @@ jQuery.fn.daterangepicker = function(settings){
 
 	//picker divs
 	var rpPickers = jQuery('<div class="ranges ui-widget-header ui-corner-all ui-helper-clearfix"><div class="range-start"><span class="title-start">Start Date</span></div><div class="range-end"><span class="title-end">End Date</span></div></div>').appendTo(rp);
-	rpPickers.find('.range-start, .range-end')
-		.datepicker(options.datepickerOptions);
-	
-	
+	rpPickers.find('.range-start, .range-end').datepicker(options.datepickerOptions);
 	rpPickers.find('.range-start').datepicker('setDate', inputDateA);
 	rpPickers.find('.range-end').datepicker('setDate', inputDateB);
-	
-	rpPickers.find('.range-start, .range-end')	
-		.bind('constrainOtherPicker', function(){
-			if(options.constrainDates){
-				//constrain dates
-				if($(this).is('.range-start')){
-					rp.find('.range-end').datepicker( "option", "minDate", $(this).datepicker('getDate'));
-				}
-				else{
-					rp.find('.range-start').datepicker( "option", "maxDate", $(this).datepicker('getDate'));
-				}			
-			}
-		})
-		.trigger('constrainOtherPicker');
-	
+
+	rpPickers.find('.range-start, .range-end')
+	  .bind('constrainOtherPicker', function(){
+      if(options.constrainDates){
+        //constrain dates
+        if($(this).is('.range-start')){
+          rp.find('.range-end').datepicker( "option", "minDate", $(this).datepicker('getDate'));
+        }
+        else{
+          rp.find('.range-start').datepicker( "option", "maxDate", $(this).datepicker('getDate'));
+        }      
+      }
+    }).trigger('constrainOtherPicker');
+
+
 	var doneBtn = jQuery('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
 	.click(function(){
 		rp.find('.ui-datepicker-current-day').trigger('click');
@@ -310,24 +317,29 @@ jQuery.fn.daterangepicker = function(settings){
 		return false;
 	});
 	//hide em all
-	rpPickers.hide().find('.range-start, .range-end, .btnDone').hide();
-	
-	rp.data('state', 'closed');
-	
-	//Fixed for jQuery UI 1.8.7 - Calendars are hidden otherwise!
-	rpPickers.find('.ui-datepicker').css("display","block");
+  rpPickers.hide().find('.range-start, .range-end, .btnDone').hide();
+
+  rp.data('state', 'closed');
+
+  //Fixed for jQuery UI 1.8.7 - Calendars are hidden otherwise!
+  rpPickers.find('.ui-datepicker').css("display","block");
 	
 	//inject rp
 	jQuery(options.appendTo).append(rp);
 	
 	//wrap and position
 	rp.wrap('<div class="ui-daterangepickercontain"></div>');
+	if(options.posX){
+		rp.parent().css('left', options.posX);
+	}
+	if(options.posY){
+		rp.parent().css('top', options.posY);
+	}
 
 	//add arrows (only available on one input)
 	if(options.arrows && rangeInput.size()==1){
 		var prevLink = jQuery('<a href="#" class="ui-daterangepicker-prev ui-corner-all" title="'+ options.prevLinkText +'"><span class="ui-icon ui-icon-circle-triangle-w">'+ options.prevLinkText +'</span></a>');
 		var nextLink = jQuery('<a href="#" class="ui-daterangepicker-next ui-corner-all" title="'+ options.nextLinkText +'"><span class="ui-icon ui-icon-circle-triangle-e">'+ options.nextLinkText +'</span></a>');
-	
 		jQuery(this)
 		.addClass('ui-rangepicker-input ui-widget-content')
 		.wrap('<div class="ui-daterangepicker-arrows ui-widget ui-widget-header ui-helper-clearfix ui-corner-all"></div>')
@@ -344,6 +356,7 @@ jQuery.fn.daterangepicker = function(settings){
 					if(thisDate == null){return false;}
 					jQuery(this).datepicker( "setDate", thisDate.add({milliseconds: diff}) ).find('.ui-datepicker-current-day').trigger('click');
 			});
+			
 			return false;
 		})
 		.hover(
@@ -353,8 +366,9 @@ jQuery.fn.daterangepicker = function(settings){
 			function(){
 				jQuery(this).removeClass('ui-state-hover');
 			});
-		
-		var riContain = rangeInput.parent();	
+
+    var riContain = rangeInput.parent();
+
 	}
 	
 	
@@ -367,6 +381,3 @@ jQuery.fn.daterangepicker = function(settings){
 	rp.click(function(){return false;}).hide();
 	return this;
 }
-
-
-
