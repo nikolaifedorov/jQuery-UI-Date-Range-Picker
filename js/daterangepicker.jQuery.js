@@ -211,6 +211,7 @@ jQuery.fn.daterangepicker = function(settings){
         offRight = jQuery(window).width() - val - relEl.outerWidth();
 
     if(val > offRight){
+      rp.parent().css(side, '');
       side = 'right', val =  offRight;
     }
     rp.parent().css(side, val).css('top', riOffset.top + relEl.outerHeight());
