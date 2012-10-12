@@ -17,6 +17,11 @@
 				  $('#rangeC').daterangepicker({arrows: true}); 
 				  $('#rangeD').daterangepicker(); 
 				  $('#rangeE').daterangepicker({constrainDates: true}); 
+				  var send_count = 0;
+				  $('#range2send').daterangepicker({ 
+				  	onChange: function() { send_count = send_count + 1; alert(send_count)},
+				  	onClose: function() { send_count = 0 }
+				  }); 
 			 });
 		</script>
 		
@@ -60,6 +65,10 @@
 		<input type="text" value="4/23/99" id="rangeE" />			
 </div>
 
+<h2>Rangepicker send 2 request onChange event</h2>
+<div>
+		<input type="text" value="4/23/99" id="range2send" />			
+</div>
 
 </html>
 
