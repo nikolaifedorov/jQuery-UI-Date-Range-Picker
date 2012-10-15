@@ -92,6 +92,9 @@ jQuery.fn.daterangepicker = function(settings) {
 			  //if closeOnSelect is true
 			  if(options.closeOnSelect){
 				  if(!rp.find('li.ui-state-active').is('.ui-daterangepicker-dateRange') && !rp.is(':animated') ){
+				  	if(rp.find('.ui-daterangepicker-specificDate').is('.ui-state-active')){
+							options.onTotalChange();
+						}
 					  hideRP();
 				  }
 			  }
@@ -272,6 +275,7 @@ jQuery.fn.daterangepicker = function(settings) {
 	      var dateEnd = (typeof el.data('dateEnd') == 'string') ? Date.parse(el.data('dateEnd')) : el.data('dateEnd')();
 			  rp.find('.range-start').datepicker('setDate', dateStart).find('.ui-datepicker-current-day').trigger('click');
 			  rp.find('.range-end').datepicker('setDate', dateEnd).find('.ui-datepicker-current-day').trigger('click');
+			  options.onTotalChange();
 	  }
 
 	  return false;
@@ -301,6 +305,7 @@ jQuery.fn.daterangepicker = function(settings) {
 	var doneBtn = jQuery('<button class="btnDone ui-state-default ui-corner-all">'+ options.doneButtonText +'</button>')
 	.click(function(){
 	  rp.find('.ui-datepicker-current-day').trigger('click');
+	  options.onTotalChange();
 	  hideRP();
 	})
 	.hover(

@@ -21,6 +21,11 @@
 				  $('#range2send').daterangepicker({ 
 				  	onChange: function() { send_count = send_count + 1; alert(send_count)},
 				  	onClose: function() { send_count = 0 }
+				  });
+				  var send_count_2 = 0;
+				  $('#range1send').daterangepicker({ 
+				  	onTotalChange: function() { send_count_2 = send_count_2 + 1; alert(send_count_2)},
+				  	onClose: function() { send_count_2 = 0 }
 				  }); 
 			 });
 		</script>
@@ -68,6 +73,11 @@
 <h2>Rangepicker send 2 request onChange event</h2>
 <div>
 		<input type="text" value="4/23/99" id="range2send" />			
+</div>
+
+<h2>Rangepicker send 1 request onChange event</h2>
+<div>
+		<input type="text" value="4/23/99" id="range1send" />			
 </div>
 
 </html>
